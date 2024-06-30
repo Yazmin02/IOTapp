@@ -50,6 +50,10 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.junit.ktx)
+    implementation(libs.androidx.material3.android)
+    testImplementation("junit:junit:4.12")
+    androidTestImplementation("junit:junit:4.12")
     dependencies {
         implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
         implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
