@@ -1,6 +1,5 @@
 package com.example.iotapp.ui.screens.locations
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -22,10 +21,12 @@ fun LocationScreen(
             Text(text = "Ubicaciones", style = MaterialTheme.typography.h4)
 
             state.locations?.let { locations ->
-                Log.d("LocationScreen", "Locations: $locations")
                 locations.forEach { location ->
                     Text(text = "Nombre: ${location.name ?: "N/A"}, Detalles: ${location.details ?: "N/A"}")
-                    Button(onClick = { onLocationSelected(location.id ?: 0) }) {
+                    Button(onClick = {
+                        selectedLocationId = location.id
+                        onLocationSelected(location.id!!)
+                    }) {
                         Text("Ver Botes")
                     }
                 }

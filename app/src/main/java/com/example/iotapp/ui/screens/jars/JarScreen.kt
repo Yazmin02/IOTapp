@@ -6,68 +6,79 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.iotapp.ui.screens.statistics.StatisticsViewModel
-import com.example.iotapp.ui.screens.statistics.StatisticsState
-import com.example.iotapp.ui.screens.statistics.StatisticsScreen
+import com.example.iotapp.data.models.Jar
 
 @Composable
 fun JarScreen(locationId: Int, jarViewModel: JarViewModel = viewModel()) {
     val state by jarViewModel.uiState.collectAsState()
-    val statisticsViewModel: StatisticsViewModel = viewModel()
-    val statisticsState by statisticsViewModel.uiState.collectAsState()
 
     LaunchedEffect(locationId) {
         jarViewModel.readJarsByLocation(locationId)
     }
 
+    var description by remember { mutableStateOf("") }
+    var selectedJar by remember { mutableStateOf<Jar?>(null) }
+
     Column(modifier = Modifier.padding(16.dp)) {
         Text(text = "Botes en la ubicación $locationId", style = MaterialTheme.typography.h4)
 
-        state.jars?.let { jars ->
-            jars.forEach { jar ->
-                Text(text = "Descripción: ${jar.description}")
+        val jars = state.jars
+        if (jars != null && jars.isNotEmpty()) {
+            Column(modifier = Modifier.weight(1f)) {
+                jars.forEach { jar ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = "Descripción: ${jar.description}")
+                        Row {
+                            Button(onClick = { selectedJar = jar; description = jar.description }) {
+                                Text("Editar")
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Button(onClick = { jarViewModel.deleteJar(jar.id!!, locationId) }) {
+                                Text("Eliminar")
+                            }
+                        }
+                    }
+                }
             }
+        } else {
+            Text(text = "No hay botes en esta ubicación.")
         }
 
-        var description by remember { mutableStateOf("") }
+        Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = description,
             onValueChange = { description = it },
-            label = { Text("Descripción") }
+            label = { Text("Descripción") },
+            modifier = Modifier.fillMaxWidth()
         )
 
-        Button(onClick = {
-            jarViewModel.createJar(locationId, description)
-        }) {
-            Text("Crear Bote")
-        }
+        Spacer(modifier = Modifier.height(8.dp))
 
         Button(onClick = {
-            statisticsViewModel.fetchStatistics(locationId, "one_week")
+            if (selectedJar != null) {
+                jarViewModel.updateJar(selectedJar!!.id!!, locationId, description)
+                selectedJar = null
+            } else {
+                jarViewModel.createJar(locationId, description)
+            }
+            description = ""
         }) {
-            Text("Ver Estadísticas")
+            Text(if (selectedJar != null) "Actualizar Bote" else "Crear Bote")
         }
 
-        if (statisticsState.isLoading) {
+        Spacer(modifier = Modifier.height(8.dp))
+
+        if (state.isLoading) {
             CircularProgressIndicator()
         }
 
-        statisticsState.fillLevelTrend?.let { trend ->
-            Text(text = "Tendencia de Nivel de Llenado")
-            trend.forEach { data ->
-                Text(text = "Fecha: ${data.Timestamp}, Nivel de Llenado: ${data.FillLevel}")
-            }
-        }
-
-        statisticsState.fillFrequency?.let { frequency ->
-            Text(text = "Frecuencia de Llenado")
-            frequency.forEach { data ->
-                Text(text = "Nivel de Llenado: ${data.FillLevel}, Frecuencia: ${data.Count}")
-            }
-        }
-
-        statisticsState.error?.let {
+        state.error?.let {
             Text(text = it, color = MaterialTheme.colors.error)
         }
     }

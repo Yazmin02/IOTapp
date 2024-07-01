@@ -5,8 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.iotapp.data.models.Jar
 import com.example.iotapp.data.network.ApiClient
 import com.example.iotapp.data.repository.JarRepository
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -35,8 +33,7 @@ class JarViewModel : ViewModel() {
             val response = jarRepository.readJars()
             if (response.isSuccessful) {
                 response.body()?.let { body ->
-                    val jarType = object : TypeToken<List<Jar>>() {}.type
-                    val jars: List<Jar> = Gson().fromJson(body.string(), jarType)
+                    val jars = parseJarsFromBody(body.string())
                     _uiState.value = _uiState.value.copy(jars = jars, isLoading = false)
                 }
             } else {
@@ -74,14 +71,17 @@ class JarViewModel : ViewModel() {
             _uiState.value = _uiState.value.copy(isLoading = true)
             val response = jarRepository.getJarsByLocation(locationId)
             if (response.isSuccessful) {
-                response.body()?.let { body ->
-                    val jarType = object : TypeToken<List<Jar>>() {}.type
-                    val jars: List<Jar> = Gson().fromJson(body.string(), jarType)
+                response.body()?.let { jars ->
                     _uiState.value = _uiState.value.copy(jars = jars, isLoading = false)
                 }
             } else {
                 _uiState.value = _uiState.value.copy(isLoading = false, error = "Error fetching jars by location")
             }
         }
+    }
+
+    private fun parseJarsFromBody(body: String): List<Jar> {
+        val jarType = object : com.google.gson.reflect.TypeToken<List<Jar>>() {}.type
+        return com.google.gson.Gson().fromJson(body, jarType)
     }
 }
