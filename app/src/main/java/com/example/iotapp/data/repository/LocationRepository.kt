@@ -1,30 +1,40 @@
 package com.example.iotapp.data.repository
 
-import com.example.iotapp.data.models.ApiResponse
 import com.example.iotapp.data.models.Location
-import com.example.iotapp.data.network.ApiClient
+import com.example.iotapp.data.network.ApiService
+import okhttp3.ResponseBody
 import retrofit2.Response
 
-class LocationRepository {
-    private val apiService = ApiClient.apiService
-
-    suspend fun createLocation(name: String, details: String): Response<ApiResponse> {
-        val request = mapOf("operation" to "create", "name" to name, "details" to details)
-        return apiService.createLocation(request)
+class LocationRepository(private val apiService: ApiService) {
+    suspend fun createLocation(location: Location): Response<ResponseBody> {
+        val request = mapOf(
+            "operation" to "create",
+            "name" to location.name,
+            "details" to location.details
+        )
+        return apiService.manageLocation(request)
     }
 
-    suspend fun getLocations(): Response<List<Location>> {
+    suspend fun readLocations(): Response<ResponseBody> {
         val request = mapOf("operation" to "read")
-        return apiService.getLocations(request)
+        return apiService.manageLocation(request)
     }
 
-    suspend fun updateLocation(id: Int, name: String, details: String): Response<ApiResponse> {
-        val request = mapOf("operation" to "update", "id" to id, "name" to name, "details" to details)
-        return apiService.updateLocation(request)
+    suspend fun updateLocation(location: Location): Response<ResponseBody> {
+        val request = mapOf(
+            "operation" to "update",
+            "id" to location.id!!,
+            "name" to location.name,
+            "details" to location.details
+        )
+        return apiService.manageLocation(request)
     }
 
-    suspend fun deleteLocation(id: Int): Response<ApiResponse> {
-        val request = mapOf("operation" to "delete", "id" to id)
-        return apiService.deleteLocation(request)
+    suspend fun deleteLocation(id: Int): Response<ResponseBody> {
+        val request = mapOf(
+            "operation" to "delete",
+            "id" to id
+        )
+        return apiService.manageLocation(request)
     }
 }

@@ -9,4 +9,8 @@ class UserRepository(private val apiService: ApiService) {
     suspend fun authenticateUser(user: User): Response<ResponseBody> {
         return apiService.authenticateUser(user)
     }
+
+    suspend fun registerUser(user: User): Response<ResponseBody> {
+        return apiService.registerUser(user)
+    }
 }

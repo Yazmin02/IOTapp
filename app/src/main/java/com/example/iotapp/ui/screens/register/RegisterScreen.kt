@@ -1,6 +1,5 @@
-package com.example.iotapp.ui.screens.login
+package com.example.iotapp.ui.screens.register
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -12,25 +11,33 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.iotapp.ui.components.PrimaryButton
 
 @Composable
-fun LoginScreen(
-    onLoginSuccess: () -> Unit,
-    onNavigateToRegister: () -> Unit,
-    loginViewModel: LoginViewModel = viewModel()
+fun RegisterScreen(
+    onRegisterSuccess: () -> Unit,
+    registerViewModel: RegisterViewModel = viewModel()
 ) {
-    val state by loginViewModel.uiState.collectAsState()
+    val state by registerViewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Bienvenido", style = MaterialTheme.typography.h4)
+        Text(text = "Registro de Usuario", style = MaterialTheme.typography.h4)
 
         Spacer(modifier = Modifier.height(16.dp))
 
         TextField(
+            value = state.name,
+            onValueChange = { registerViewModel.onNameChange(it) },
+            label = { Text("Nombre") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        TextField(
             value = state.email,
-            onValueChange = { loginViewModel.onEmailChange(it) },
+            onValueChange = { registerViewModel.onEmailChange(it) },
             label = { Text("Correo electrónico") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -39,7 +46,7 @@ fun LoginScreen(
 
         TextField(
             value = state.password,
-            onValueChange = { loginViewModel.onPasswordChange(it) },
+            onValueChange = { registerViewModel.onPasswordChange(it) },
             label = { Text("Contraseña") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
@@ -47,13 +54,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        PrimaryButton(text = "Iniciar sesión", onClick = { loginViewModel.authenticateUser() })
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextButton(onClick = onNavigateToRegister) {
-            Text("¿No tienes cuenta? Regístrate")
-        }
+        PrimaryButton(text = "Registrar", onClick = { registerViewModel.registerUser() })
 
         if (state.isLoading) {
             CircularProgressIndicator()
@@ -63,11 +64,9 @@ fun LoginScreen(
             Text(text = state.error, color = MaterialTheme.colors.error)
         }
 
-        LaunchedEffect(state.isAuthenticated) {
-            Log.d("LoginScreen", "isAuthenticated: ${state.isAuthenticated}")
-            if (state.isAuthenticated) {
-                Log.d("LoginScreen", "Navigating to locations screen")
-                onLoginSuccess()
+        LaunchedEffect(state.isRegistered) {
+            if (state.isRegistered) {
+                onRegisterSuccess()
             }
         }
     }

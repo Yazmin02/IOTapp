@@ -3,9 +3,11 @@ package com.example.iotapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.iotapp.ui.screens.locations.LocationScreen
 import com.example.iotapp.ui.screens.login.LoginScreen
+import com.example.iotapp.ui.screens.register.RegisterScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,9 +20,15 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MyApp() {
-    LoginScreen(onLoginSuccess = {
-        // Navegación a la pantalla de locaciones
-    })
+    var currentScreen by remember { mutableStateOf("login") }
+    when (currentScreen) {
+        "login" -> LoginScreen(
+            onLoginSuccess = { currentScreen = "locations" },
+            onNavigateToRegister = { currentScreen = "register" }
+        )
+        "register" -> RegisterScreen(onRegisterSuccess = { currentScreen = "login" })
+        "locations" -> LocationScreen()
+    }
 }
 
 @Preview(showBackground = true)

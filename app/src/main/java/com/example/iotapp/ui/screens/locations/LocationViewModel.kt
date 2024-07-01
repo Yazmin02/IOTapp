@@ -2,79 +2,61 @@ package com.example.iotapp.ui.screens.locations
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.iotapp.data.models.Location
+import com.example.iotapp.data.network.ApiClient
 import com.example.iotapp.data.repository.LocationRepository
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class LocationViewModel : ViewModel() {
-    private val locationRepository = LocationRepository()
+    private val locationRepository = LocationRepository(ApiClient.apiService)
 
-    private val _state = MutableStateFlow(LocationState())
-    val state: StateFlow<LocationState> = _state
+    private val _uiState = MutableStateFlow(LocationState())
+    val uiState: StateFlow<LocationState> = _uiState
 
     init {
-        fetchLocations()
-    }
-
-    private fun fetchLocations() {
-        _state.value = _state.value.copy(isLoading = true)
-
-        viewModelScope.launch {
-            try {
-                val response = locationRepository.getLocations()
-                if (response.isSuccessful) {
-                    _state.value = _state.value.copy(locations = response.body() ?: emptyList(), isLoading = false)
-                } else {
-                    _state.value = _state.value.copy(error = "Error fetching locations", isLoading = false)
-                }
-            } catch (e: Exception) {
-                _state.value = _state.value.copy(error = "An error occurred", isLoading = false)
-            }
-        }
+        readLocations()
     }
 
     fun createLocation(name: String, details: String) {
         viewModelScope.launch {
-            try {
-                val response = locationRepository.createLocation(name, details)
-                if (response.isSuccessful) {
-                    fetchLocations()
-                } else {
-                    _state.value = _state.value.copy(error = "Error creating location")
+            val response = locationRepository.createLocation(Location(name = name, details = details))
+            if (response.isSuccessful) {
+                readLocations()
+            }
+        }
+    }
+
+    fun readLocations() {
+        viewModelScope.launch {
+            val response = locationRepository.readLocations()
+            if (response.isSuccessful) {
+                response.body()?.let { body ->
+                    val locationType = object : TypeToken<List<Location>>() {}.type
+                    val locations: List<Location> = Gson().fromJson(body.string(), locationType)
+                    _uiState.value = _uiState.value.copy(locations = locations)
                 }
-            } catch (e: Exception) {
-                _state.value = _state.value.copy(error = "An error occurred")
             }
         }
     }
 
     fun updateLocation(id: Int, name: String, details: String) {
         viewModelScope.launch {
-            try {
-                val response = locationRepository.updateLocation(id, name, details)
-                if (response.isSuccessful) {
-                    fetchLocations()
-                } else {
-                    _state.value = _state.value.copy(error = "Error updating location")
-                }
-            } catch (e: Exception) {
-                _state.value = _state.value.copy(error = "An error occurred")
+            val response = locationRepository.updateLocation(Location(id = id, name = name, details = details))
+            if (response.isSuccessful) {
+                readLocations()
             }
         }
     }
 
     fun deleteLocation(id: Int) {
         viewModelScope.launch {
-            try {
-                val response = locationRepository.deleteLocation(id)
-                if (response.isSuccessful) {
-                    fetchLocations()
-                } else {
-                    _state.value = _state.value.copy(error = "Error deleting location")
-                }
-            } catch (e: Exception) {
-                _state.value = _state.value.copy(error = "An error occurred")
+            val response = locationRepository.deleteLocation(id)
+            if (response.isSuccessful) {
+                readLocations()
             }
         }
     }
