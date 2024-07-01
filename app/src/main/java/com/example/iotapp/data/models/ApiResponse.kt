@@ -1,6 +1,10 @@
 package com.example.iotapp.data.models
 
+import com.google.gson.annotations.SerializedName
+
 data class ApiResponse(
-    val message: String,
+    @SerializedName("message")
+    val message: String?,
+    @SerializedName("success")
     val success: Boolean
 )

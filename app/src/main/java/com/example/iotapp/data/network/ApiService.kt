@@ -11,15 +11,15 @@ interface ApiService {
     @POST("authenticate_user")
     suspend fun authenticateUser(@Body user: User): Response<ApiResponse>
 
-    @POST("LocationFunctions")
+    @POST("LocationFunctions/create")
     suspend fun createLocation(@Body request: Map<String, String>): Response<ApiResponse>
 
-    @POST("LocationFunctions")
+    @POST("LocationFunctions/get")
     suspend fun getLocations(@Body request: Map<String, String>): Response<List<Location>>
 
-    @POST("LocationFunctions")
+    @POST("LocationFunctions/update")
     suspend fun updateLocation(@Body request: Map<String, Any>): Response<ApiResponse>
 
-    @POST("LocationFunctions")
+    @POST("LocationFunctions/delete")
     suspend fun deleteLocation(@Body request: Map<String, Any>): Response<ApiResponse>
 }

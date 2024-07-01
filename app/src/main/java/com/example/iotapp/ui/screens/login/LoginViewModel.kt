@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+
+
 class LoginViewModel : ViewModel() {
     private val userRepository = UserRepository()
 
@@ -22,7 +24,7 @@ class LoginViewModel : ViewModel() {
         _state.value = _state.value.copy(password = password)
     }
 
-    fun authenticateUser() {
+    fun authenticateUser(onLoginSuccess: () -> Unit) {
         val email = _state.value.email
         val password = _state.value.password
 
@@ -38,12 +40,12 @@ class LoginViewModel : ViewModel() {
                 val response = userRepository.authenticateUser(User(email, password))
                 if (response.isSuccessful && response.body()?.success == true) {
                     _state.value = _state.value.copy(isLoading = false)
-                    // Handle successful login (e.g., navigate to another screen)
+                    onLoginSuccess()
                 } else {
                     _state.value = _state.value.copy(isLoading = false, error = "Authentication failed")
                 }
             } catch (e: Exception) {
-                _state.value = _state.value.copy(isLoading = false, error = "An error occurred")
+                _state.value = _state.value.copy(isLoading = false, error = "An error occurred: ${e.message}")
             }
         }
     }

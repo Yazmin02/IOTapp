@@ -11,4 +11,6 @@ class UserRepository {
     suspend fun authenticateUser(user: User): Response<ApiResponse> {
         return apiService.authenticateUser(user)
     }
+
+    // Otros métodos según sea necesario para interactuar con la API
 }
