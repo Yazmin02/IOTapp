@@ -3,7 +3,7 @@ package com.example.iotapp.ui.screens.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.iotapp.data.models.User
+import com.example.iotapp.data.models.LoginRequest
 import com.example.iotapp.data.network.ApiClient
 import com.example.iotapp.data.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,8 +41,11 @@ class LoginViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
+                // Crear un objeto LoginRequest con las credenciales
+                val request = LoginRequest(email = email, password = password)
+
                 // Llamar al repositorio para autenticar al usuario
-                val response = userRepository.authenticateUser(User(name = "", email = email, password = password))
+                val response = userRepository.authenticateUser(request)
                 Log.d("LoginViewModel", "Request: email=$email, password=$password")
                 Log.d("LoginViewModel", "Response Code: ${response.code()}")
                 Log.d("LoginViewModel", "Response Body: ${response.body()?.string()}")

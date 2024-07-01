@@ -3,13 +3,12 @@ package com.example.iotapp.ui.screens.register
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.iotapp.data.models.User
+import com.example.iotapp.data.models.RegisterRequest
 import com.example.iotapp.data.network.ApiClient
 import com.example.iotapp.data.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import okhttp3.ResponseBody
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -47,8 +46,11 @@ class RegisterViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
+                // Crear un objeto RegisterRequest con los datos del usuario
+                val request = RegisterRequest(name = name, email = email, password = password)
+
                 // Llamar al repositorio para registrar al usuario
-                val response = userRepository.registerUser(User(name = name, email = email, password = password))
+                val response = userRepository.registerUser(request)
                 Log.d("RegisterViewModel", "Request: name=$name, email=$email, password=$password")
                 Log.d("RegisterViewModel", "Response Code: ${response.code()}")
                 Log.d("RegisterViewModel", "Response Body: ${response.body()?.string()}")
