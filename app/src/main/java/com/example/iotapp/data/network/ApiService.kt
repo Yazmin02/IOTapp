@@ -2,6 +2,7 @@ package com.example.iotapp.data.network
 
 import com.example.iotapp.data.models.LoginRequest
 import com.example.iotapp.data.models.RegisterRequest
+import com.example.iotapp.data.models.LocationRequest
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -10,7 +11,6 @@ import retrofit2.http.POST
 import retrofit2.http.GET
 import retrofit2.http.Path
 
-// Interfaz para definir los endpoints de la API
 interface ApiService {
     @Headers("Content-Type: application/json")
     @POST("authenticate_user")
@@ -22,7 +22,7 @@ interface ApiService {
 
     @Headers("Content-Type: application/json")
     @POST("LocationFunctions")
-    suspend fun manageLocation(@Body request: Map<String, Any>): Response<ResponseBody>
+    suspend fun manageLocation(@Body request: LocationRequest): Response<ResponseBody>
 
     @Headers("Content-Type: application/json")
     @POST("JarFunctions")

@@ -8,7 +8,7 @@ import retrofit2.Response
 class JarRepository(private val apiService: ApiService) {
 
     suspend fun createJar(jar: Jar): Response<ResponseBody> {
-        val request = mapOf(
+        val request = mapOf<String, Any>(
             "operation" to "create",
             "locationId" to jar.locationId,
             "description" to jar.description
@@ -17,12 +17,12 @@ class JarRepository(private val apiService: ApiService) {
     }
 
     suspend fun readJars(): Response<ResponseBody> {
-        val request = mapOf("operation" to "read")
+        val request = mapOf<String, Any>("operation" to "read")
         return apiService.manageJar(request)
     }
 
     suspend fun updateJar(jar: Jar): Response<ResponseBody> {
-        val request = mapOf(
+        val request = mapOf<String, Any>(
             "operation" to "update",
             "id" to jar.id!!,
             "locationId" to jar.locationId,
@@ -32,7 +32,7 @@ class JarRepository(private val apiService: ApiService) {
     }
 
     suspend fun deleteJar(id: Int): Response<ResponseBody> {
-        val request = mapOf(
+        val request = mapOf<String, Any>(
             "operation" to "delete",
             "id" to id
         )
@@ -40,7 +40,7 @@ class JarRepository(private val apiService: ApiService) {
     }
 
     suspend fun getJarsByLocation(locationId: Int): Response<ResponseBody> {
-        val request = mapOf(
+        val request = mapOf<String, Any>(
             "operation" to "getByLocation",
             "locationId" to locationId
         )
