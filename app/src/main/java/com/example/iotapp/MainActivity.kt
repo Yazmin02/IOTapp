@@ -9,6 +9,7 @@ import com.example.iotapp.ui.screens.locations.LocationScreen
 import com.example.iotapp.ui.screens.login.LoginScreen
 import com.example.iotapp.ui.screens.register.RegisterScreen
 import com.example.iotapp.ui.screens.jars.JarScreen
+import com.example.iotapp.ui.screens.statistics.StatisticScreen
 import com.example.iotapp.ui.screens.statistics.StatisticsViewModel
 import com.example.iotapp.data.repository.StatisticsRepository
 import com.example.iotapp.data.network.ApiClient
@@ -26,6 +27,7 @@ class MainActivity : ComponentActivity() {
 fun MyApp() {
     var currentScreen by remember { mutableStateOf("login") }
     var selectedLocationId by remember { mutableStateOf<Int?>(null) }
+    var selectedJarId by remember { mutableStateOf<Int?>(null) }
     val statisticsRepository = StatisticsRepository(ApiClient.apiService)
     val statisticsViewModel = StatisticsViewModel(statisticsRepository)
 
@@ -45,8 +47,15 @@ fun MyApp() {
         )
         "jars" -> JarScreen(
             locationId = selectedLocationId!!,
-            onNavigateBack = { currentScreen = "locations" }
+            onNavigateBack = { currentScreen = "locations" },
+            onNavigateToStatistics = { jarId ->
+                selectedJarId = jarId
+                currentScreen = "statistics"
+            }
         )
+        "statistics" -> selectedJarId?.let { jarId ->
+            StatisticScreen(jarId = jarId, viewModel = statisticsViewModel)
+        }
     }
 }
 

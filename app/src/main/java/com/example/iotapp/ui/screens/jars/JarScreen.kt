@@ -21,7 +21,12 @@ import com.example.iotapp.R
 import com.example.iotapp.data.models.Jar
 
 @Composable
-fun JarScreen(locationId: Int, jarViewModel: JarViewModel = viewModel(), onNavigateBack: () -> Unit) {
+fun JarScreen(
+    locationId: Int,
+    jarViewModel: JarViewModel = viewModel(),
+    onNavigateBack: () -> Unit,
+    onNavigateToStatistics: (Int) -> Unit // Nueva función de navegación
+) {
     val state by jarViewModel.uiState.collectAsState()
 
     LaunchedEffect(locationId) {
@@ -99,6 +104,15 @@ fun JarScreen(locationId: Int, jarViewModel: JarViewModel = viewModel(), onNavig
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Text("Eliminar")
+                            }
+                            Button(
+                                onClick = {
+                                    onNavigateToStatistics(jar.id!!) // Navegar a la pantalla de estadísticas
+                                },
+                                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF00E5FF)),
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("Ver Estadísticas")
                             }
                         }
                     }

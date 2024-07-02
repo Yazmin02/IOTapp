@@ -29,10 +29,9 @@ interface ApiService {
     @Headers("Content-Type: application/json")
     @POST("BeanFunctions")
     suspend fun getJarsByLocation(@Body request: JarRequest): Response<List<Jar>>
-
     @GET("event_history/{binId}/{timeRange}")
     suspend fun getEventHistory(
         @Path("binId") binId: Int,
         @Path("timeRange") timeRange: String
-    ): Response<ResponseBody>
+    ): ApiResponse
 }
