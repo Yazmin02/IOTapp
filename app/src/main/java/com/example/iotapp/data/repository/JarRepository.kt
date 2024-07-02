@@ -12,7 +12,8 @@ class JarRepository(private val apiService: ApiService) {
         val request = JarRequest(
             operation = "create",
             locationId = jar.locationId,
-            description = jar.description
+            description = jar.description,
+            status = jar.status
         )
         return apiService.manageJar(request)
     }
@@ -27,7 +28,8 @@ class JarRepository(private val apiService: ApiService) {
             operation = "update",
             id = jar.id,
             locationId = jar.locationId,
-            description = jar.description
+            description = jar.description,
+            status = jar.status
         )
         return apiService.manageJar(request)
     }

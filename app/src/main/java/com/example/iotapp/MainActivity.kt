@@ -43,7 +43,10 @@ fun MyApp() {
                 currentScreen = "jars"
             }
         )
-        "jars" -> JarScreen(locationId = selectedLocationId!!)
+        "jars" -> JarScreen(
+            locationId = selectedLocationId!!,
+            onNavigateBack = { currentScreen = "locations" }
+        )
     }
 }
 

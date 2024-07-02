@@ -26,6 +26,8 @@ class LocationViewModel : ViewModel() {
             val response = locationRepository.createLocation(Location(name = name, details = details))
             if (response.isSuccessful) {
                 readLocations()
+            } else {
+                _uiState.value = _uiState.value.copy(error = "Error creating location")
             }
         }
     }
@@ -53,6 +55,8 @@ class LocationViewModel : ViewModel() {
             val response = locationRepository.updateLocation(Location(id = id, name = name, details = details))
             if (response.isSuccessful) {
                 readLocations()
+            } else {
+                _uiState.value = _uiState.value.copy(error = "Error updating location")
             }
         }
     }
@@ -62,6 +66,8 @@ class LocationViewModel : ViewModel() {
             val response = locationRepository.deleteLocation(id)
             if (response.isSuccessful) {
                 readLocations()
+            } else {
+                _uiState.value = _uiState.value.copy(error = "Error deleting location")
             }
         }
     }

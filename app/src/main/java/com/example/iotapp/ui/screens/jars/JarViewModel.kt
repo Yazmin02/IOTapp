@@ -15,10 +15,10 @@ class JarViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(JarState())
     val uiState: StateFlow<JarState> = _uiState
 
-    fun createJar(locationId: Int, description: String) {
+    fun createJar(locationId: Int, description: String, status: Int) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
-            val response = jarRepository.createJar(Jar(locationId = locationId, description = description))
+            val response = jarRepository.createJar(Jar(locationId = locationId, description = description, status = status))
             if (response.isSuccessful) {
                 readJarsByLocation(locationId)
             } else {
@@ -42,10 +42,10 @@ class JarViewModel : ViewModel() {
         }
     }
 
-    fun updateJar(id: Int, locationId: Int, description: String) {
+    fun updateJar(id: Int, locationId: Int, description: String, status: Int) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
-            val response = jarRepository.updateJar(Jar(id = id, locationId = locationId, description = description))
+            val response = jarRepository.updateJar(Jar(id = id, locationId = locationId, description = description, status = status))
             if (response.isSuccessful) {
                 readJarsByLocation(locationId)
             } else {
